@@ -7,7 +7,7 @@ from datetime import datetime
 
 #The following file must be updated before running this program
 configFilePath='./device.cfg'
-waitInterval=1
+waitInterval=[1]
 
 def get_system_load():
 	load = json.loads(os.popen('./sys-stats.sh').read())
@@ -16,12 +16,13 @@ def get_system_load():
 
 	
 def command_callback(cmd):
-	print("Command received: %s" % cmd.data)
+	print("Incomming command from Watson IoT: %s" % cmd.command)
 	if cmd.command == "set_interval":
 		if 'interval' not in cmd.data:
 			print("Error: Interval was not present")
 		else:
-			waitInterval = cmd.data['interval']
+			waitInterval[0]=cmd.data['interval']
+			print("Reporting interval changed to %f" % waitInterval[0])
 	elif cmd.command == "print":
 		if 'message' not in cmd.data:
 			print("Error: message was not included in command")
@@ -32,6 +33,7 @@ def command_callback(cmd):
 	else:
 		print("Error: Unrecognized command: %s" % cmd.command)
 
+
 try:
   options = ibmiotf.device.ParseConfigFile(configFilePath)
   client = ibmiotf.device.Client(options)
@@ -41,8 +43,9 @@ except ibmiotf.ConnectionException  as e:
 	os.exit(1)
 
 client.connect()
+
 while True:
 	data = get_system_load()
 	client.publishEvent("status", "json", data)
-	time.sleep(waitInterval)
+	time.sleep(waitInterval[0])
 
