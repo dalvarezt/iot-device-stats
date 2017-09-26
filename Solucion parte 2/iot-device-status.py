@@ -29,7 +29,7 @@ def command_callback(cmd):
 		else:
 			print("Message Received from Watson IoT: %s" % cmd.data['message'])
 	elif cmd.command == "stop":
-		os.exit(0)
+		os._exit(0)
 	else:
 		print("Error: Unrecognized command: %s" % cmd.command)
 
@@ -40,7 +40,7 @@ try:
   client.commandCallback = command_callback
 except ibmiotf.ConnectionException  as e:
 	print "Error connecting to Watson IoT", e
-	os.exit(1)
+	os._exit(1)
 
 client.connect()
 
