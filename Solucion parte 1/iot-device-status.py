@@ -17,10 +17,9 @@ def get_system_load():
 try:
   options = ibmiotf.device.ParseConfigFile(configFilePath)
   client = ibmiotf.device.Client(options)
-  client.commandCallback = command_callback
 except ibmiotf.ConnectionException  as e:
 	print "Error connecting to Watson IoT", e
-	os.exit(1)
+	os._exit(1)
 
 client.connect()
 
